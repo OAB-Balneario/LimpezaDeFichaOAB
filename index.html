@@ -1,0 +1,390 @@
+<html>
+
+<head>
+    <title>Limpeza de Ficha OAB</title>
+</head>
+<div>
+    <div class="header">
+        <img src="OAB_BC_SEM_FUNDO.png" alt="OAB Santa Catarina">
+    </div>
+</div>
+<body style="background-color: black; color: white; font-family: Arial, sans-serif;">
+    <div class="container">
+        
+
+
+
+
+        </header>
+        <h2 style="color: #9b59b6; font-family:cursive;">Limpeza de Ficha - OAB</h2>
+        <div class="main-container">
+            <div class="form-section">
+                <div class="input-group">
+                    <label for="advogado">Nome do Advogado</label>
+                    <input type="text" id="advogado">
+                </div>
+                <div class="input-group">
+                    <label for="rgAdvogado">RG do Advogado</label>
+                    <input type="text" id="rgAdvogado">
+                </div>
+                <div class="input-group">
+                    <label for="cliente">Nome do Cliente</label>
+                    <input type="text" id="cliente">
+                </div>
+                <div class="input-group">
+                    <label for="rgCliente">RG do Cliente</label>
+                    <input type="text" id="rgCliente">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="adicionarPrisao()"
+                        style="background: #9b59b6; color: white; border: none; padding: 10px; cursor: pointer;">Adicionar
+                        Prisão</button>
+                    <button onclick="resetarFormulario()"
+                        style="background: #9b59b6; color: white; border: none; padding: 10px; cursor: pointer;">Limpar
+                        Tudo</button>
+                </div>
+
+            </div>
+            <div class="crime-section">
+                <input type="text" id="search" placeholder="Buscar artigos e itens..." onkeyup="filtrarArtigos()"
+                    style="width: 100%; padding: 5px;">
+                <div class="crime-container" id="crimes"></div>
+            </div>
+        </div>
+        <textarea id="resultado" readonly></textarea>
+        <button onclick="copiarTextoFormatado()"
+            style="margin-top: 10px; background: #9b59b6; color: white; border: none; padding: 10px; cursor: pointer;">
+            Copiar Texto Formatado
+        </button>
+    </div>
+
+    <script>
+        const crimes = [
+            { artigo: 1, nome: "Azaralhamento" },
+            { artigo: 2, nome: "Prisão Militar" },
+            { artigo: 3, nome: "Prevaricação" },
+            { artigo: 4, nome: "Invasão de Departamento Policial" },
+            { artigo: 5, nome: "Tentativa de Homicídio" },
+            { artigo: 6, nome: "Homicídio Culposo" },
+            { artigo: 7, nome: "Homicídio Doloso" },
+            { artigo: 8, nome: "Homicídio Doloso Qualificado" },
+            { artigo: 9, nome: "Omissão de Socorro" },
+            { artigo: 10, nome: "Lesão Corporal" },
+            { artigo: 11, nome: "Sequestro" },
+            { artigo: 12, nome: "Assédio" },
+            { artigo: 13, nome: "Calúnia" },
+            { artigo: 14, nome: "Injúria" },
+            { artigo: 15, nome: "Difamação" },
+            { artigo: 16, nome: "Invasão de Propriedade" },
+            { artigo: 17, nome: "Perturbação do Sossego Alheio" },
+            { artigo: 18, nome: "Ameaça" },
+            { artigo: 19, nome: "Extorsão" },
+            { artigo: 20, nome: "Peculato" },
+            { artigo: 21, nome: "Falsidade Ideológica" },
+            { artigo: 22, nome: "Tráfico de Influência" },
+            { artigo: 23, nome: "Abuso de Autoridade" },
+            { artigo: 24, nome: "Falsa Comunicação de Crime" },
+            { artigo: 25, nome: "Tentativa de Suborno" },
+            { artigo: 26, nome: "Uso Indevido do Sistema de Emergência" },
+            { artigo: 27, nome: "Desacato" },
+            { artigo: 28, nome: "Desobediência" },
+            { artigo: 29, nome: "Obstrução da Justiça" },
+            { artigo: 30, nome: "Ocultação de Provas" },
+            { artigo: 31, nome: "Resistência à Prisão" },
+            { artigo: 32, nome: "Dano ao Patrimônio Público" },
+            { artigo: 33, nome: "Atentado ao Pudor" },
+            { artigo: 34, nome: "Associação Criminosa" },
+            { artigo: 35, nome: "Apologia ao Crime" },
+            { artigo: 36, nome: "Posse de Arma em Público" },
+            { artigo: 37, nome: "Ocultação Facial" },
+            { artigo: 38, nome: "Uso de Equipamentos Restritos" },
+            { artigo: 39, nome: "Vadiagem" },
+            { artigo: 40, nome: "Vandalismo" },
+            { artigo: 41, nome: "Réu Reincidente" },
+            { artigo: 42, nome: "Cúmplice" },
+            { artigo: 43, nome: "Tráfico de Armas" },
+            { artigo: 44, nome: "Tráfico de Itens Ilegais" },
+            { artigo: 45, nome: "Tráfico de Munições" },
+            { artigo: 46, nome: "Tráfico de Drogas" },
+            { artigo: 47, nome: "Porte de Arma Pesada" },
+            { artigo: 48, nome: "Porte de Arma Leve" },
+            { artigo: 49, nome: "Porte de Arma Branca" },
+            { artigo: 50, nome: "Posse de Peças de Armas" },
+            { artigo: 51, nome: "Posse de Cápsulas" },
+            { artigo: 52, nome: "Posse de Munição" },
+            { artigo: 53, nome: "Posse de Itens Ilegais" },
+            { artigo: 54, nome: "Aviãozinho" },
+            { artigo: 55, nome: "Posse de Componentes Narcóticos" },
+            { artigo: 56, nome: "Posse de Drogas" },
+            { artigo: 57, nome: "Posse de Dinheiro Sujo" },
+            { artigo: 58, nome: "Desmanche de Veículos" },
+            { artigo: 59, nome: "Roubo" },
+            { artigo: 60, nome: "Furto a Caixa Eletrônico" },
+            { artigo: 61, nome: "Furto" },
+            { artigo: 62, nome: "Receptação de Veículos" },
+            { artigo: 63, nome: "Roubo de Veículos" },
+            { artigo: 64, nome: "Tentativa de Furto" },
+            { artigo: 65, nome: "Furto de Veículos" },
+            { artigo: 66, nome: "Condução Imprudente" },
+            { artigo: 67, nome: "Dirigir na Contra Mão" },
+            { artigo: 68, nome: "Alta Velocidade" },
+            { artigo: 69, nome: "Poluição Sonora" },
+            { artigo: 70, nome: "Corridas Ilegais" },
+            { artigo: 71, nome: "Uso Excessivo de Insulfilm" },
+            { artigo: 72, nome: "Direção sem Habilitação" },
+            { artigo: 73, nome: "Estacionar em Área Proibida" },
+            { artigo: 74, nome: "Não Ceder Passagem a Viaturas" },
+            { artigo: 75, nome: "Impedir o Fluxo do Tráfego" },
+            { artigo: 76, nome: "Veículo muito danificado" }
+        ]
+
+        function copiarTextoFormatado() {
+            let resultado = document.getElementById("resultado").value.trim();
+            let textoFormatado = `\`\`\`\n${resultado}\n\`\`\``;
+
+            // Criando um elemento temporário para copiar o texto
+            let tempInput = document.createElement("textarea");
+            tempInput.value = textoFormatado;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            alert("Texto copiado com formatação!");
+        }
+
+
+        function carregarCrimes() {
+            let divCrimes = document.getElementById("crimes");
+            divCrimes.innerHTML = crimes.map(crime => `
+                <div class="crime" data-nome="${crime.nome.toLowerCase()}">
+                    <input type="checkbox" id="crime${crime.artigo}" value="${crime.artigo}">
+                    <label for="crime${crime.artigo}">Art. ${crime.artigo} - ${crime.nome}</label>
+                </div>
+            `).join('');
+        }
+
+        function resetarFormulario() {
+            // Limpa os campos de entrada
+            document.getElementById("advogado").value = "";
+            document.getElementById("rgAdvogado").value = "";
+            document.getElementById("cliente").value = "";
+            document.getElementById("rgCliente").value = "";
+
+            // Limpa o textarea (relatório)
+            document.getElementById("resultado").value = "";
+
+            // Desmarca todos os crimes selecionados
+            document.querySelectorAll('.crime-container input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarCrimes);
+
+        function filtrarArtigos() {
+            let input = document.getElementById("search").value.toLowerCase();
+            document.querySelectorAll(".crime").forEach(crime => {
+                crime.style.display = crime.getAttribute("data-nome").includes(input) ? "block" : "none";
+            });
+        }
+
+        function adicionarPrisao() {
+            let advogado = document.getElementById("advogado").value;
+            let rgAdvogado = document.getElementById("rgAdvogado").value;
+            let cliente = document.getElementById("cliente").value;
+            let rgCliente = document.getElementById("rgCliente").value;
+            let resultado = document.getElementById("resultado");
+
+            let artigosSelecionados = crimes.filter(crime =>
+                document.getElementById(`crime${crime.artigo}`).checked
+            ).map(crime => `Art. ${crime.artigo} - ${crime.nome}`).join("\n");
+
+            if (!artigosSelecionados) return;
+
+            let textoAtual = resultado.value.trim();
+            let numPrisoes = (textoAtual.match(/Prisão \d+/g) || []).length + 1;
+
+            let honorarios = 400000 + (numPrisoes - 1) * 200000;
+            let painel = 100000 + (numPrisoes - 1) * 50000;
+
+            let novaPrisao = `\nPrisão ${numPrisoes} - \nCrimes:\n${artigosSelecionados}\n—————————————————————————————————`;
+
+            if (numPrisoes === 1) {
+                resultado.value = `⚖️ LIMPEZA DE FICHA ⚖️\n\n` +
+                    `Nome Cliente: ${cliente}\nRG: ${rgCliente}\n` +
+                    `—————————————————————————————————` +
+                    novaPrisao +
+                    `\n# ADVOGADO: ${advogado} | ${rgAdvogado}\n` +
+                    `Honorarios: R$ ${honorarios.toLocaleString()} | Painel: R$ ${painel.toLocaleString()}`;
+            } else {
+                let textoSemRodape = textoAtual.replace(/\n# ADVOGADO:.*\nHonorarios:.*/, "");
+
+                resultado.value = textoSemRodape + novaPrisao +
+                    `\n# ADVOGADO: ${advogado} | ${rgAdvogado}\n` +
+                    `Honorarios: R$ ${honorarios.toLocaleString()} | Painel: R$ ${painel.toLocaleString()}`;
+            }
+
+
+            document.querySelectorAll('.crime-container input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        carregarCrimes();
+    </script>
+
+    <style>
+         body {
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+        position: relative;
+    }
+
+    .header img {
+        max-width: 300px;
+        height: auto;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 900px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #121212;
+        box-shadow: 0 0 15px rgba(92, 158, 255, 0.5);
+        border: 2px solid #5C9EFF;
+        margin: 20px auto;
+    }
+
+    h2 {
+        text-align: center;
+        color: #8A2BE2;
+        margin-bottom: 20px;
+    }
+
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .form-section,
+    .crime-section {
+        width: 48%;
+        padding: 15px;
+        background: #1E1E1E;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(92, 158, 255, 0.3);
+        border: 2px solid #5C9EFF;
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-group label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #5C9EFF;
+    }
+
+    .input-group input {
+        padding: 8px;
+        border: 2px solid #5C9EFF;
+        border-radius: 5px;
+        background: #121212;
+        color: white;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        background: #8A2BE2;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #7a24cc;
+    }
+
+    .crime-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 2px solid #5C9EFF;
+        background: #222;
+        border-radius: 5px;
+    }
+
+    .crime {
+        background: #333;
+        color: white;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: left;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .crime:hover {
+        background: #444;
+    }
+
+    #resultado {
+        width: 100%;
+        height: 400px;
+        margin-top: 20px;
+        resize: none;
+        font-size: 14px;
+        padding: 15px;
+        background: #222;
+        color: white;
+        border: 2px solid #5C9EFF;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(92, 158, 255, 0.3);
+        line-height: 1.5;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-section,
+        .crime-section {
+            width: 100%;
+        }
+    }
+    </style>
+
+</body>
+
+</html>
